@@ -1,0 +1,74 @@
+# Pruebas con la extensión "REST Client" de VS Code (o el cliente HTTP de Rider/VS).
+@base = http://localhost:5080
+
+### 1. Registro -> 201 { id, email }
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{ "email": "gloria@correo.com", "password": "secreto123" }
+
+### 2. Registro repetido -> 409
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{ "email": "gloria@correo.com", "password": "secreto123" }
+
+### 3. Login -> 200 { access_token }
+# @name login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "gloria@correo.com", "password": "secreto123" }
+
+###
+@token = {{login.response.body.access_token}}
+
+### 4. Login con clave incorrecta -> 401
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "gloria@correo.com", "password": "mala" }
+
+### 5. Listado (público) -> 200 { data, total, page, limit, items, totalPages }
+GET {{base}}/juegos
+
+### 6. Búsqueda por nombre + paginación
+GET {{base}}/juegos?search=hollow&page=1&limit=5
+
+### 7. Detalle -> 200 / 404
+GET {{base}}/juegos/1
+
+### 8. Crear SIN token -> 401
+POST {{base}}/juegos
+Content-Type: application/json
+
+{ "nombre": "Zelda", "imagen": "https://ejemplo.com/zelda.jpg", "categoria": "Aventura" }
+
+### 9. Crear CON token -> 201
+POST {{base}}/juegos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "nombre": "Zelda", "imagen": "https://ejemplo.com/zelda.jpg", "categoria": "Aventura" }
+
+### 10. Crear inválido (falta nombre) -> 400 { message: [...], error, statusCode }
+POST {{base}}/juegos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "imagen": "x", "categoria": "Aventura" }
+
+### 11. Editar parcialmente -> 200
+PATCH {{base}}/juegos/14
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "nombre": "Zelda: Ocarina of Time" }
+
+### 12. Eliminar -> 204
+DELETE {{base}}/juegos/14
+Authorization: Bearer {{token}}
+
+### 13. Eliminar inexistente -> 404
+DELETE {{base}}/juegos/9999
+Authorization: Bearer {{token}}

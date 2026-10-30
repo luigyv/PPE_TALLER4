@@ -1,0 +1,9 @@
+.claude/
+.windsurf/
+.agents/
+node_modules/ 
+.env 
+*.db
+src/generated/
+dev.db
+tsconfig.build.tsbuildinfo

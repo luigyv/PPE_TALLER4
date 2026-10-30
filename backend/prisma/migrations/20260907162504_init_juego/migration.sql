@@ -1,0 +1,8 @@
+-- CreateTable
+CREATE TABLE "Juego" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "nombre" TEXT NOT NULL,
+    "imagen" TEXT NOT NULL,
+    "categoria" TEXT NOT NULL,
+    "creadoEn" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
